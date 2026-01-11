@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakura Tuition - Student Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        
+        .zen-font {
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        /* Cherry Blossom Animation */
+        .sakura-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+            /* Fixed position to cover full scrollable area if needed, 
+               but strictly for the visual viewport in this design */
+            position: fixed; 
+        }
+
+        .petal {
+            position: absolute;
+            background-color: #bfdbfe; /* Blue petal color */
+            border-radius: 150% 0 150% 0;
+            animation: animate-petal 10s linear infinite;
+        }
+
+        .petal::after {
+            content: "";
+            position: absolute;
+            top: -14%;
+            left: -10%;
+            width: 100%;
+            height: 100%;
+            border-radius: 150% 0 150% 0;
+            background-color: #bfdbfe; /* Blue petal color */
+            transform: rotate(15deg);
+        }
+
+        @keyframes animate-petal {
+            0% {
+                opacity: 0;
+                top: -10%;
+                transform: translateX(0) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            20% {
+                transform: translateX(-20px) rotate(45deg);
+            }
+            40% {
+                transform: translateX(-20px) rotate(90deg);
+            }
+            60% {
+                transform: translateX(20px) rotate(135deg);
+            }
+            80% {
+                transform: translateX(-20px) rotate(180deg);
+            }
+            100% {
+                top: 110%;
+                transform: translateX(-20px) rotate(225deg);
+            }
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .input-group:focus-within i {
+            color: #3b82f6; /* Tailwind blue-500 */
+        }
+        
+        .input-group:focus-within input {
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-blue-100 min-h-screen w-full flex items-center justify-center relative py-10">
+
+    <!-- Back to Home Link -->
+    <a href="index.html" class="fixed top-6 left-6 z-20 text-gray-500 hover:text-blue-600 transition-colors flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm">
+        <i class="fas fa-arrow-left"></i> Back to Login
+    </a>
+
+    <!-- Background Decoration -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <!-- Abstract shape 1 (Blue variant) -->
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <!-- Abstract shape 2 (Cyan variant) -->
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        
+        <!-- Mount Fuji Graphic -->
+        <div class="absolute bottom-0 w-full flex justify-center opacity-20 pointer-events-none">
+             <svg viewBox="0 0 1440 320" class="w-full text-blue-300 fill-current">
+                 <path d="M720 128L0 320h1440L720 128z" fill="#e2e8f0"></path>
+                 <path d="M720 128L580 200h280L720 128z" fill="#fff"></path>
+             </svg>
+        </div>
+    </div>
+
+    <!-- Falling Petals Container -->
+    <div id="sakura-container" class="sakura-container"></div>
+
+    <!-- Main Registration Container -->
+    <div class="z-10 w-full max-w-2xl px-6 my-8">
+        <!-- Removed border-t-4 border-blue-400 to match login page -->
+        <div class="glass-card rounded-2xl p-8 sm:p-10 transform transition-all hover:scale-[1.005] duration-500">
+            
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50 mb-4 border-2 border-blue-100 shadow-sm relative overflow-hidden group">
+                    <i class="fas fa-user-graduate text-3xl text-blue-500 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 zen-font tracking-wide">Student Registration</h1>
+                <p class="text-gray-500 text-sm mt-2 font-medium">Join the Sakura Tuition Family</p>
+            </div>
+
+            <form id="regForm" class="space-y-6">
+                
+                <!-- Personal Info Section -->
+                <div class="bg-blue-50/50 p-4 rounded-xl space-y-4">
+                    <h3 class="text-blue-800 font-semibold text-sm uppercase tracking-wider border-b border-blue-100 pb-2 mb-2">
+                        <i class="fas fa-id-card mr-2"></i>Personal Details
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- First Name -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">First Name</label>
+                            <input type="text" id="firstName" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/80" placeholder="e.g. Kamal">
+                        </div>
+                        <!-- Last Name -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Last Name</label>
+                            <input type="text" id="lastName" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/80" placeholder="e.g. Perera">
+                        </div>
+                    </div>
+
+                    <!-- DOB -->
+                    <div class="space-y-1">
+                        <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Date of Birth</label>
+                        <input type="date" id="dob" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/80 text-gray-600">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Email -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Email</label>
+                            <input type="email" id="email" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/80" placeholder="student@example.com">
+                        </div>
+                        <!-- Phone -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Phone Number</label>
+                            <input type="tel" id="phone" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/80" placeholder="077-1234567">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardian Info Section -->
+                <div class="bg-blue-50/50 p-4 rounded-xl space-y-4">
+                    <h3 class="text-blue-800 font-semibold text-sm uppercase tracking-wider border-b border-blue-100 pb-2 mb-2">
+                        <i class="fas fa-user-shield mr-2"></i>Guardian Details
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Guardian Name -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Guardian Name</label>
+                            <input type="text" id="guardianName" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/80" placeholder="Parent/Guardian Name">
+                        </div>
+                        <!-- Guardian Phone -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Guardian Phone</label>
+                            <input type="tel" id="guardianPhone" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/80" placeholder="077-7654321">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Security Section -->
+                <div class="bg-indigo-50/50 p-4 rounded-xl space-y-4">
+                    <h3 class="text-indigo-800 font-semibold text-sm uppercase tracking-wider border-b border-indigo-100 pb-2 mb-2">
+                        <i class="fas fa-lock mr-2"></i>Account Security
+                    </h3>
+
+                    <!-- Username -->
+                    <div class="space-y-1">
+                        <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Create Username</label>
+                        <div class="relative">
+                            <input type="text" id="newUsername" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white/80" placeholder="Choose a unique username">
+                            <i class="fas fa-user absolute right-3 top-3 text-gray-400"></i>
+                        </div>
+                        <p id="userError" class="text-xs text-red-500 mt-1 hidden font-bold"><i class="fas fa-times-circle mr-1"></i>Username already taken.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Password -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Password</label>
+                            <input type="password" id="newPass" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white/80" placeholder="••••••••">
+                        </div>
+                        <!-- Confirm Password -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Confirm Password</label>
+                            <input type="password" id="confirmPass" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white/80" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                    class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:-translate-y-0.5 transition-all duration-200 mt-6">
+                    Complete Registration <i class="fas fa-check-circle ml-2 mt-0.5"></i>
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 1. Sakura Petals Animation (Shared Logic)
+        function createPetal() {
+            const container = document.getElementById('sakura-container');
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            const startLeft = Math.random() * 100;
+            const animationDuration = Math.random() * 5 + 8;
+            const size = Math.random() * 10 + 10;
+            
+            petal.style.left = startLeft + '%';
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.animationDuration = animationDuration + 's';
+            petal.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            container.appendChild(petal);
+            
+            setTimeout(() => {
+                petal.remove();
+            }, animationDuration * 1000);
+        }
+
+        // Initialize petals
+        for(let i = 0; i < 15; i++) {
+            setTimeout(createPetal, Math.random() * 5000);
+        }
+        setInterval(createPetal, 800);
+
+
+        // 2. Registration Logic
+        document.getElementById('regForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get Values
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const dob = document.getElementById('dob').value;
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const guardianName = document.getElementById('guardianName').value.trim();
+            const guardianPhone = document.getElementById('guardianPhone').value.trim();
+            const username = document.getElementById('newUsername').value.trim();
+            const pass = document.getElementById('newPass').value;
+            const confirm = document.getElementById('confirmPass').value;
+            
+            const userError = document.getElementById('userError');
+
+            // Validation
+            if (pass !== confirm) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            // Check DB
+            let db = JSON.parse(localStorage.getItem('sakura_users') || '{}');
+
+            if (db[username]) {
+                userError.classList.remove('hidden');
+                document.getElementById('newUsername').classList.add('border-red-300', 'bg-red-50');
+                document.getElementById('newUsername').focus();
+                return;
+            } else {
+                userError.classList.add('hidden');
+                document.getElementById('newUsername').classList.remove('border-red-300', 'bg-red-50');
+            }
+
+            // Create User Object
+            db[username] = {
+                pass: pass,
+                redirect: 'studentdash.html',
+                role: 'Student',
+                name: `${firstName} ${lastName}`, // Combined name for simple display elsewhere
+                details: {
+                    firstName,
+                    lastName,
+                    dob,
+                    email,
+                    phone,
+                    guardianName,
+                    guardianPhone
+                }
+            };
+            
+            // Save
+            localStorage.setItem('sakura_users', JSON.stringify(db));
+
+            // Feedback
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Registering...`;
+            
+            setTimeout(() => {
+                alert('Registration Successful! Please Login.');
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

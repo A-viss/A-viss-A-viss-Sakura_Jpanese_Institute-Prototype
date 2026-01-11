@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakura Tuition - Courses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; overflow-x: hidden; }
+        .zen-font { font-family: 'Zen Antique Soft', serif; }
+
+        /* Sakura Animation */
+        .sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .petal { position: absolute; background-color: #ffd7e6; border-radius: 150% 0 150% 0; animation: animate-petal 10s linear infinite; }
+        .petal::after { content: ""; position: absolute; top: -14%; left: -10%; width: 100%; height: 100%; border-radius: 150% 0 150% 0; background-color: #ffd7e6; transform: rotate(15deg); }
+        @keyframes animate-petal {
+            0% { opacity: 0; top: -10%; transform: translateX(0) rotate(0deg); }
+            10% { opacity: 1; }
+            100% { top: 110%; transform: translateX(-20px) rotate(225deg); }
+        }
+
+        /* Glassmorphism */
+        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: transform 0.3s ease; }
+        .glass-card:hover { transform: translateY(-5px); }
+
+        /* Nav & Filter Styles */
+        .nav-link { position: relative; color: #4b5563; transition: color 0.3s; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #db2777; transition: width 0.3s; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link.active { color: #db2777; font-weight: 600; }
+
+        .filter-btn { transition: all 0.3s; }
+        .filter-btn.active { background-color: #db2777; color: white; border-color: #db2777; }
+        
+        /* Receipt Pattern */
+        .receipt-pattern {
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 via-white to-pink-100 min-h-screen text-gray-700">
+
+    <div id="sakura-container" class="sakura-container"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 w-full z-50 glass-nav px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center relative">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-500 border border-pink-200"><i class="fas fa-torii-gate"></i></div>
+                <div><h1 class="text-xl font-bold text-gray-800 zen-font leading-none">Sakura</h1><span class="text-xs text-pink-500 font-medium tracking-widest">TUITION</span></div>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="studentdash.html" class="nav-link">Home</a>
+                <a href="stdash.html" class="nav-link">Dashboard</a>
+                <a href="stcourse.html" class="nav-link active">Courses</a>
+                <a href="stanalysiz.html" class="nav-link">Analytics</a>
+                <a href="stprofile.html" class="nav-link">Profile</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:block text-right"><p id="userNameDisplay" class="text-sm font-bold text-gray-800">Vismal Kethmika</p><p class="text-xs text-gray-500">N5 Level</p></div>
+                <div class="relative hidden sm:block" id="profile-container">
+                    <button onclick="toggleProfileMenu()" class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 p-0.5 shadow-md focus:outline-none transform active:scale-95 transition-transform">
+                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="User" class="w-full h-full rounded-full bg-white object-cover">
+                    </button>
+                    <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 hidden border border-gray-100 z-50 origin-top-right transition-all duration-200">
+                        <a href="stprofile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600"><i class="fas fa-cog mr-2 text-gray-400"></i>Settings</a>
+                        <button onclick="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt mr-2 text-red-400"></i>Sign Out</button>
+                    </div>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-600 text-2xl focus:outline-none p-2"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-lg flex flex-col transition-all duration-300 transform origin-top">
+            <a href="studentdash.html" class="px-6 py-4 border-b border-gray-100">Home</a>
+            <a href="stdash.html" class="px-6 py-4 border-b border-gray-100">Dashboard</a>
+            <a href="stcourse.html" class="px-6 py-4 border-b border-gray-100">Courses</a>
+            <a href="stanalysiz.html" class="px-6 py-4 border-b border-gray-100">Analytics</a>
+            <a href="stprofile.html" class="px-6 py-4 border-b border-gray-100">Profile</a>
+            <button onclick="logout()" class="w-full text-left px-6 py-4 text-red-600">Sign Out</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-24 pb-12 px-6 max-w-7xl mx-auto">
+
+        <!-- Header & Filters -->
+        <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800 zen-font">Available Courses</h2>
+                <p class="text-gray-500 mt-1">Enroll in a new class to advance your Japanese skills.</p>
+            </div>
+            <div class="flex gap-2 bg-white/60 p-1.5 rounded-xl border border-white shadow-sm overflow-x-auto max-w-full">
+                <button onclick="filterCourses('all')" class="filter-btn active px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-white hover:shadow-sm" data-filter="all">All</button>
+                <button onclick="filterCourses('N5')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-white hover:shadow-sm" data-filter="N5">N5</button>
+                <button onclick="filterCourses('N4')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-white hover:shadow-sm" data-filter="N4">N4</button>
+                <button onclick="filterCourses('N3')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-white hover:shadow-sm" data-filter="N3">N3</button>
+                <button onclick="filterCourses('N2')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-white hover:shadow-sm" data-filter="N2">N2</button>
+            </div>
+        </div>
+
+        <!-- Course Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="courseGrid">
+            <!-- Populated by JS -->
+        </div>
+
+    </main>
+
+    <!-- 1. Trial Video Modal -->
+    <div id="trialModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0">
+        <div class="w-full max-w-4xl mx-4 relative transform scale-95 transition-transform duration-300">
+            <button onclick="closeTrialModal()" class="absolute -top-10 right-0 text-white text-2xl hover:text-pink-400 transition"><i class="fas fa-times"></i></button>
+            <div class="bg-black rounded-xl overflow-hidden shadow-2xl aspect-video relative">
+                <img src="https://images.unsplash.com/photo-1516383740770-fbcc5ccbece0?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover opacity-50" alt="Video Placeholder">
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                    <i class="fas fa-play-circle text-6xl text-white/80 mb-4 animate-pulse"></i>
+                    <p class="text-white font-bold">Playing Trial Lesson: <span id="trialTitle">Basics</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-gray-900/60 backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-pink-500 to-rose-500 p-6 text-white relative">
+                <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-white/80 hover:text-white"><i class="fas fa-times"></i></button>
+                <h3 class="text-xl font-bold zen-font">Enrollment Payment</h3>
+                <p class="text-pink-100 text-sm mt-1">Secure Transaction</p>
+            </div>
+            
+            <!-- Body -->
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase font-bold">Selected Course</p>
+                        <p class="font-bold text-gray-800 text-lg" id="payCourseName">Japanese N5</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Amount</p>
+                        <p class="font-bold text-pink-600 text-xl" id="payCoursePrice">$50.00</p>
+                    </div>
+                </div>
+
+                <form id="paymentForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Card Number</label>
+                        <div class="relative">
+                            <input type="text" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none" placeholder="0000 0000 0000 0000">
+                            <i class="fas fa-credit-card absolute left-3 top-2.5 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Expiry Date</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none" placeholder="MM/YY">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">CVC</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none" placeholder="123">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cardholder Name</label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none" placeholder="Name on Card">
+                    </div>
+                    
+                    <button type="submit" class="w-full mt-6 bg-gray-900 hover:bg-black text-white py-3 rounded-lg font-bold shadow-lg transform transition hover:-translate-y-0.5 flex justify-center items-center">
+                        <span id="payBtnText">Pay Now</span>
+                        <i id="payBtnIcon" class="fas fa-lock ml-2 text-xs"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Footer -->
+            <div class="bg-gray-50 px-8 py-4 border-t border-gray-100 flex justify-center gap-4 text-gray-400 text-2xl">
+                <i class="fab fa-cc-visa hover:text-blue-900 transition"></i>
+                <i class="fab fa-cc-mastercard hover:text-red-600 transition"></i>
+                <i class="fab fa-cc-amex hover:text-blue-500 transition"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Receipt Modal -->
+    <div id="receiptModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-gray-900/80 backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm mx-4 overflow-hidden relative transform scale-95 transition-transform duration-300">
+            <!-- Receipt Top -->
+            <div class="bg-green-500 p-6 text-center text-white">
+                <div class="w-16 h-16 bg-white text-green-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                    <i class="fas fa-check text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold">Payment Successful!</h3>
+                <p class="text-green-100 text-sm">Enrollment Confirmed</p>
+            </div>
+            
+            <!-- Receipt Body -->
+            <div class="p-6 receipt-pattern relative">
+                <!-- Tear line visual -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-b from-black/5 to-transparent"></div>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Transaction ID</span>
+                        <span class="font-mono font-bold text-gray-700">#SKR-<span id="receiptId">8392</span></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Date</span>
+                        <span class="font-bold text-gray-700" id="receiptDate">Oct 24, 2026</span>
+                    </div>
+                    <div class="border-t border-dashed border-gray-300 my-2"></div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Course</span>
+                        <span class="font-bold text-gray-800 text-right" id="receiptCourse">Japanese N5</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Sensei</span>
+                        <span class="font-bold text-gray-800" id="receiptSensei">Avishka S.</span>
+                    </div>
+                    <div class="border-t border-gray-300 my-2"></div>
+                    <div class="flex justify-between text-base">
+                        <span class="font-bold text-gray-800">Total Paid</span>
+                        <span class="font-bold text-green-600" id="receiptAmount">$50.00</span>
+                    </div>
+                </div>
+
+                <div class="mt-8 space-y-2">
+                    <button onclick="window.location.href='stdash.html'" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg font-bold shadow transition">
+                        Go to Dashboard
+                    </button>
+                    <button onclick="closeReceiptModal()" class="w-full bg-white border border-gray-200 text-gray-600 py-2 rounded-lg font-bold hover:bg-gray-50 transition">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 1. Course Data ---
+        const courses = [
+            { id: 1, level: 'N5', title: 'N5 Absolute Beginner', sensei: 'Avishka Sanduni', price: 50, img: 'https://images.unsplash.com/photo-1528164344705-47542687000d?q=80&w=800&auto=format&fit=crop' },
+            { id: 2, level: 'N5', title: 'N5 Kanji Masterclass', sensei: 'Kenji Tanaka', price: 35, img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=800&auto=format&fit=crop' },
+            { id: 3, level: 'N4', title: 'N4 Elementary Grammar', sensei: 'Vismal Kethmika', price: 60, img: 'https://images.unsplash.com/photo-1492571350019-22de08371fd3?q=80&w=800&auto=format&fit=crop' },
+            { id: 4, level: 'N4', title: 'N4 Conversation Club', sensei: 'Yuki Sato', price: 45, img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop' },
+            { id: 5, level: 'N3', title: 'N3 Intermediate Bridge', sensei: 'Dr. H. Yamamoto', price: 75, img: 'https://images.unsplash.com/photo-1480796927426-f609979314bd?q=80&w=800&auto=format&fit=crop' },
+            { id: 6, level: 'N2', title: 'N2 Advanced Business', sensei: 'Hiroshi Nakamura', price: 100, img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop' }
+        ];
+
+        // --- 2. Render Courses ---
+        function renderCourses(filter = 'all') {
+            const grid = document.getElementById('courseGrid');
+            grid.innerHTML = '';
+            
+            const filtered = filter === 'all' ? courses : courses.filter(c => c.level === filter);
+
+            filtered.forEach(course => {
+                const badgeColor = course.level === 'N5' ? 'bg-green-100 text-green-700' : 
+                                   (course.level === 'N4' ? 'bg-blue-100 text-blue-700' : 
+                                   (course.level === 'N3' ? 'bg-yellow-100 text-yellow-700' : 'bg-purple-100 text-purple-700'));
+
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl overflow-hidden flex flex-col group';
+                card.innerHTML = `
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="${course.img}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                        <div class="absolute top-3 right-3 ${badgeColor} px-3 py-1 rounded-full text-xs font-bold shadow-sm">${course.level}</div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-gray-800 mb-1">${course.title}</h3>
+                            <p class="text-sm text-gray-500 flex items-center mb-4"><i class="fas fa-chalkboard-teacher mr-2 text-pink-400"></i> ${course.sensei}</p>
+                        </div>
+                        <div class="flex justify-between items-end border-t border-gray-200 pt-4 mt-2">
+                            <div>
+                                <p class="text-xs text-gray-400">Tuition Fee</p>
+                                <p class="text-2xl font-bold text-pink-600">$${course.price}<span class="text-sm text-gray-400 font-normal">/mo</span></p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <button onclick="openTrial('${course.title}')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 font-bold text-sm hover:bg-gray-50 transition">Watch Trial</button>
+                            <button onclick="openPayment('${course.title}', '${course.sensei}', ${course.price})" class="px-4 py-2 bg-gray-900 text-white rounded-lg font-bold text-sm hover:bg-black transition shadow-md">Enroll Now</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- 3. Filter Logic ---
+        function filterCourses(level) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`button[data-filter="${level}"]`).classList.add('active');
+            renderCourses(level);
+        }
+
+        // --- 4. Modal Logic ---
+        
+        // Trial Modal
+        function openTrial(title) {
+            document.getElementById('trialTitle').textContent = title;
+            const modal = document.getElementById('trialModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.children[0].classList.remove('scale-95'); }, 10);
+        }
+        function closeTrialModal() {
+            const modal = document.getElementById('trialModal');
+            modal.classList.add('opacity-0'); modal.children[0].classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // Payment Modal
+        let selectedCourseData = {};
+
+        function openPayment(title, sensei, price) {
+            selectedCourseData = { title, sensei, price };
+            document.getElementById('payCourseName').textContent = title;
+            document.getElementById('payCoursePrice').textContent = `$${price.toFixed(2)}`;
+            
+            const modal = document.getElementById('paymentModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.children[0].classList.remove('scale-95'); }, 10);
+        }
+        
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.classList.add('opacity-0'); modal.children[0].classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // Payment Processing
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btnText = document.getElementById('payBtnText');
+            const btnIcon = document.getElementById('payBtnIcon');
+            
+            // Loading State
+            btnText.textContent = "Processing...";
+            btnIcon.className = "fas fa-circle-notch fa-spin ml-2";
+            
+            setTimeout(() => {
+                closePaymentModal();
+                showReceipt();
+                
+                // Reset Button
+                btnText.textContent = "Pay Now";
+                btnIcon.className = "fas fa-lock ml-2 text-xs";
+            }, 1500);
+        });
+
+        // Receipt Modal
+        function showReceipt() {
+            const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            document.getElementById('receiptId').textContent = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('receiptDate').textContent = today;
+            document.getElementById('receiptCourse').textContent = selectedCourseData.title;
+            document.getElementById('receiptSensei').textContent = selectedCourseData.sensei;
+            document.getElementById('receiptAmount').textContent = `$${selectedCourseData.price.toFixed(2)}`;
+
+            const modal = document.getElementById('receiptModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.children[0].classList.remove('scale-95'); }, 10);
+        }
+        
+        function closeReceiptModal() {
+            const modal = document.getElementById('receiptModal');
+            modal.classList.add('opacity-0'); modal.children[0].classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+
+        // --- 5. Init ---
+        renderCourses();
+        
+        // Petal Animation
+        function createPetal() {
+            const container = document.getElementById('sakura-container');
+            const petal = document.createElement('div'); petal.classList.add('petal');
+            petal.style.left = Math.random() * 100 + '%'; petal.style.width = (Math.random() * 10 + 10) + 'px'; petal.style.height = petal.style.width;
+            petal.style.animationDuration = (Math.random() * 5 + 8) + 's'; petal.style.opacity = Math.random() * 0.5 + 0.3;
+            container.appendChild(petal); setTimeout(() => petal.remove(), 13000);
+        }
+        setInterval(createPetal, 1000);
+
+        // Mobile Menu
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if(mobileBtn) mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+        // Profile Menu
+        function toggleProfileMenu() { document.getElementById('profile-dropdown').classList.toggle('hidden'); }
+        function logout() { if(confirm("Log out?")) window.location.href = 'index.html'; }
+    </script>
+</body>
+</html>

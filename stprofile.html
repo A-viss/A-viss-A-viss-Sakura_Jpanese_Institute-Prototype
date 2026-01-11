@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakura Tuition - Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; overflow-x: hidden; }
+        .zen-font { font-family: 'Zen Antique Soft', serif; }
+
+        /* Sakura Animation */
+        .sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .petal { position: absolute; background-color: #ffd7e6; border-radius: 150% 0 150% 0; animation: animate-petal 10s linear infinite; }
+        .petal::after { content: ""; position: absolute; top: -14%; left: -10%; width: 100%; height: 100%; border-radius: 150% 0 150% 0; background-color: #ffd7e6; transform: rotate(15deg); }
+        @keyframes animate-petal {
+            0% { opacity: 0; top: -10%; transform: translateX(0) rotate(0deg); }
+            10% { opacity: 1; }
+            100% { top: 110%; transform: translateX(-20px) rotate(225deg); }
+        }
+
+        /* Glassmorphism */
+        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: transform 0.3s ease; }
+        .glass-card:hover { transform: translateY(-3px); }
+
+        /* Nav Link Styles */
+        .nav-link { position: relative; color: #4b5563; transition: color 0.3s; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #db2777; transition: width 0.3s; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link.active { color: #db2777; font-weight: 600; }
+        
+        /* Custom Scrollbar for Notifications */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #f9a8d4; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 via-white to-pink-100 min-h-screen text-gray-700">
+
+    <div id="sakura-container" class="sakura-container"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 w-full z-50 glass-nav px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center relative">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-500 border border-pink-200"><i class="fas fa-torii-gate"></i></div>
+                <div><h1 class="text-xl font-bold text-gray-800 zen-font leading-none">Sakura</h1><span class="text-xs text-pink-500 font-medium tracking-widest">TUITION</span></div>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="studentdash.html" class="nav-link">Home</a>
+                <a href="stdash.html" class="nav-link">Dashboard</a>
+                <a href="stcourse.html" class="nav-link">Courses</a>
+                <a href="stanalysiz.html" class="nav-link">Analytics</a>
+                <a href="stprofile.html" class="nav-link active">Profile</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:block text-right"><p id="userNameDisplay" class="text-sm font-bold text-gray-800">Student</p><p class="text-xs text-gray-500">N5 Level</p></div>
+                <div class="relative hidden sm:block" id="profile-container">
+                    <button onclick="toggleProfileMenu()" class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 p-0.5 shadow-md focus:outline-none transform active:scale-95 transition-transform">
+                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="User" class="w-full h-full rounded-full bg-white object-cover">
+                    </button>
+                    <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 hidden border border-gray-100 z-50 origin-top-right transition-all duration-200">
+                        <a href="stprofile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600"><i class="fas fa-cog mr-2 text-gray-400"></i>Settings</a>
+                        <button onclick="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt mr-2 text-red-400"></i>Sign Out</button>
+                    </div>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-600 text-2xl focus:outline-none p-2"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-lg flex flex-col transition-all duration-300 transform origin-top">
+            <a href="studentdash.html" class="px-6 py-4 border-b border-gray-100">Home</a>
+            <a href="stdash.html" class="px-6 py-4 border-b border-gray-100">Dashboard</a>
+            <a href="stcourse.html" class="px-6 py-4 border-b border-gray-100">Courses</a>
+            <a href="stanalysiz.html" class="px-6 py-4 border-b border-gray-100">Analytics</a>
+            <a href="stprofile.html" class="px-6 py-4 border-b border-gray-100">Profile</a>
+            <button onclick="logout()" class="w-full text-left px-6 py-4 text-red-600">Sign Out</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-24 pb-12 px-6 max-w-7xl mx-auto space-y-8">
+
+        <!-- 1. Profile Header -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
+            <div class="relative group">
+                <div class="w-24 h-24 md:w-32 md:h-32 rounded-full p-1 bg-gradient-to-r from-pink-400 to-rose-400 shadow-lg">
+                    <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="Profile" class="w-full h-full rounded-full bg-white object-cover">
+                </div>
+                <button class="absolute bottom-1 right-1 bg-gray-800 text-white p-2 rounded-full text-xs shadow-md hover:bg-black transition" title="Change Avatar">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <div class="text-center md:text-left flex-1">
+                <h2 class="text-3xl font-bold text-gray-800 zen-font" id="displayFullName">Vismal Kethmika</h2>
+                <p class="text-gray-500">Student ID: <span class="font-mono text-pink-600 bg-pink-50 px-2 py-0.5 rounded">#ST-2026-88</span></p>
+                <div class="flex flex-wrap justify-center md:justify-start gap-2 mt-3">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border border-blue-200">Active Student</span>
+                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold border border-purple-200">N5 Batch 12</span>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-white transition text-sm font-bold">Edit Profile</button>
+            </div>
+        </section>
+
+        <!-- 2. Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Settings -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Personal Info -->
+                <div class="glass-card rounded-2xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-user-edit mr-3 text-pink-500"></i> Personal Information
+                    </h3>
+                    <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
+                            <input type="text" value="Vismal Kethmika" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-300 outline-none bg-white/50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
+                            <input type="email" value="vismal@example.com" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-300 outline-none bg-white/50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Phone Number</label>
+                            <input type="tel" value="+94 77 123 4567" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-300 outline-none bg-white/50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Date of Birth</label>
+                            <input type="date" value="2002-03-30" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-300 outline-none bg-white/50">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Address</label>
+                            <input type="text" value="123 Sakura Lane, Colombo 07" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-300 outline-none bg-white/50">
+                        </div>
+                        <div class="md:col-span-2 text-right">
+                            <button type="button" class="px-6 py-2 bg-pink-500 text-white rounded-lg font-bold hover:bg-pink-600 transition shadow-md">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Login Statistics -->
+                <div class="glass-card rounded-2xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-shield-alt mr-3 text-blue-500"></i> Account Activity & Stats
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                        
+                        <!-- Location/Timezone -->
+                        <div class="p-4 bg-white/60 rounded-xl border border-blue-100 flex items-start gap-3">
+                            <div class="mt-1 text-blue-500"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-xs uppercase font-bold">Timezone / Region</p>
+                                <p class="font-bold text-gray-800" id="statTimezone">Detecting...</p>
+                                <p class="text-xs text-gray-400 mt-1">Based on browser settings</p>
+                            </div>
+                        </div>
+
+                        <!-- Browser/OS -->
+                        <div class="p-4 bg-white/60 rounded-xl border border-purple-100 flex items-start gap-3">
+                            <div class="mt-1 text-purple-500"><i class="fas fa-desktop"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-xs uppercase font-bold">Current Session</p>
+                                <p class="font-bold text-gray-800 truncate" id="statBrowser">Detecting...</p>
+                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-circle text-[8px] mr-1"></i>Online now</p>
+                            </div>
+                        </div>
+
+                        <!-- Last Logged -->
+                        <div class="p-4 bg-white/60 rounded-xl border border-orange-100 flex items-start gap-3">
+                            <div class="mt-1 text-orange-500"><i class="fas fa-clock"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-xs uppercase font-bold">Last Login</p>
+                                <p class="font-bold text-gray-800" id="statLastLogin">Just now</p>
+                            </div>
+                        </div>
+
+                        <!-- First Logged -->
+                        <div class="p-4 bg-white/60 rounded-xl border border-gray-100 flex items-start gap-3">
+                            <div class="mt-1 text-gray-400"><i class="fas fa-history"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-xs uppercase font-bold">Account Created</p>
+                                <p class="font-bold text-gray-800">Jan 10, 2026</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Notifications & Support -->
+            <div class="space-y-8">
+                
+                <!-- Notifications -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden h-96 flex flex-col">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-pink-500"></div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-bell mr-2 text-pink-500"></i> Notifications
+                        </h3>
+                        <span class="bg-pink-100 text-pink-600 text-xs font-bold px-2 py-0.5 rounded-full">3 New</span>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto custom-scroll space-y-3 pr-2">
+                        <!-- Alert 1 -->
+                        <div class="bg-white/70 p-3 rounded-lg border-l-4 border-l-green-400 border border-gray-100 shadow-sm">
+                            <p class="text-xs text-gray-400 mb-1 flex justify-between"><span>System</span> <span>2m ago</span></p>
+                            <p class="text-sm font-bold text-gray-800">Payment Successful</p>
+                            <p class="text-xs text-gray-600">Your enrollment for N5 has been confirmed.</p>
+                        </div>
+                        <!-- Alert 2 -->
+                        <div class="bg-white/70 p-3 rounded-lg border-l-4 border-l-blue-400 border border-gray-100 shadow-sm">
+                            <p class="text-xs text-gray-400 mb-1 flex justify-between"><span>Academic</span> <span>2h ago</span></p>
+                            <p class="text-sm font-bold text-gray-800">Exam Results Released</p>
+                            <p class="text-xs text-gray-600">Kanji Module 1 results are now available.</p>
+                        </div>
+                        <!-- Alert 3 -->
+                        <div class="bg-white/70 p-3 rounded-lg border-l-4 border-l-yellow-400 border border-gray-100 shadow-sm">
+                            <p class="text-xs text-gray-400 mb-1 flex justify-between"><span>Reminder</span> <span>1d ago</span></p>
+                            <p class="text-sm font-bold text-gray-800">Assignment Due</p>
+                            <p class="text-xs text-gray-600">Essay #3 is due tomorrow at 11:59 PM.</p>
+                        </div>
+                        <!-- Old Alert -->
+                        <div class="bg-white/40 p-3 rounded-lg border border-gray-100 opacity-75">
+                            <p class="text-xs text-gray-400 mb-1">3 days ago</p>
+                            <p class="text-sm font-bold text-gray-700">Welcome to Sakura Tuition</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white">
+                    <h3 class="text-lg font-bold mb-2 flex items-center">
+                        <i class="fas fa-headset mr-2 text-pink-400"></i> Need Help?
+                    </h3>
+                    <p class="text-sm text-gray-300 mb-4">Having trouble with your account or course materials? Our admin team is here.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center bg-white/10 p-2 rounded">
+                            <i class="fas fa-phone-alt w-8 text-center text-pink-400"></i>
+                            <span class="text-sm font-mono">011-234-5678</span>
+                        </div>
+                        <div class="flex items-center bg-white/10 p-2 rounded">
+                            <i class="fas fa-envelope w-8 text-center text-pink-400"></i>
+                            <span class="text-sm">support@sakura.lk</span>
+                        </div>
+                    </div>
+
+                    <button onclick="openSupportModal()" class="w-full mt-5 bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg font-bold transition shadow-lg text-sm">
+                        Send Message
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Support Modal -->
+    <div id="supportModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 transform scale-95 transition-transform duration-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-800">Contact Admin</h3>
+                <button onclick="closeSupportModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="supportForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Subject</label>
+                    <select class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none bg-white">
+                        <option>Technical Issue</option>
+                        <option>Course Inquiry</option>
+                        <option>Payment Issue</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Message</label>
+                    <textarea rows="4" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Describe your issue..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-gray-900 text-white py-2 rounded-lg font-bold hover:bg-black transition">Send Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/60 border-t border-gray-200 mt-12 py-8 text-center backdrop-blur-sm">
+        <p class="text-gray-500 text-sm">© 2026 Sakura Tuition. Designed with <i class="fas fa-heart text-pink-400"></i></p>
+    </footer>
+
+    <script>
+        // 1. Populate Statistics (Timezone, Browser, Last Login)
+        window.onload = function() {
+            // -- Identity --
+            const db = JSON.parse(localStorage.getItem('sakura_users') || '{}');
+            const currentUser = localStorage.getItem('sakura_current_user');
+            if (currentUser && db[currentUser]) {
+                 document.getElementById('userNameDisplay').textContent = db[currentUser].name;
+                 document.getElementById('displayFullName').textContent = db[currentUser].name;
+            }
+
+            // -- Timezone --
+            try {
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                document.getElementById('statTimezone').textContent = tz;
+            } catch(e) {
+                document.getElementById('statTimezone').textContent = "GMT +5:30";
+            }
+
+            // -- Browser/OS --
+            const ua = navigator.userAgent;
+            let browserInfo = "Unknown Device";
+            if(ua.indexOf("Chrome") > -1) browserInfo = "Chrome / Windows";
+            else if(ua.indexOf("Safari") > -1) browserInfo = "Safari / macOS";
+            else if(ua.indexOf("Firefox") > -1) browserInfo = "Firefox";
+            document.getElementById('statBrowser').textContent = browserInfo;
+
+            // -- Last Login --
+            const now = new Date();
+            document.getElementById('statLastLogin').textContent = now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        };
+
+        // 2. Support Modal Logic
+        function openSupportModal() {
+            const modal = document.getElementById('supportModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.remove('scale-95'); }, 10);
+        }
+        function closeSupportModal() {
+            const modal = document.getElementById('supportModal');
+            modal.classList.add('opacity-0'); modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+        document.getElementById('supportForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const oldText = btn.innerText;
+            btn.innerText = "Sending...";
+            setTimeout(() => {
+                alert("Message Sent! Admin will contact you shortly.");
+                closeSupportModal();
+                btn.innerText = oldText;
+            }, 1000);
+        });
+
+
+        // 3. Shared Logic (Sakura, Nav)
+        function createPetal() {
+            const container = document.getElementById('sakura-container');
+            const petal = document.createElement('div'); petal.classList.add('petal');
+            petal.style.left = Math.random() * 100 + '%'; petal.style.width = (Math.random() * 10 + 10) + 'px'; petal.style.height = petal.style.width;
+            petal.style.animationDuration = (Math.random() * 5 + 8) + 's'; petal.style.opacity = Math.random() * 0.5 + 0.3;
+            container.appendChild(petal); setTimeout(() => petal.remove(), 13000);
+        }
+        setInterval(createPetal, 1000);
+
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if(mobileBtn) mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        function toggleProfileMenu() { document.getElementById('profile-dropdown').classList.toggle('hidden'); }
+        document.addEventListener('click', e => {
+            if(!document.getElementById('profile-container').contains(e.target)) 
+                document.getElementById('profile-dropdown').classList.add('hidden');
+        });
+        function logout() { if(confirm("Log out?")) window.location.href = 'index.html'; }
+    </script>
+</body>
+</html>

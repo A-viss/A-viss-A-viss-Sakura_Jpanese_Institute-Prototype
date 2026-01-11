@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakura Tuition - Teacher Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .zen-font {
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        /* Cherry Blossom Animation (Green Theme for Teachers) */
+        .sakura-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .petal {
+            position: absolute;
+            background-color: #a7f3d0; /* Emerald-200 */
+            border-radius: 150% 0 150% 0;
+            animation: animate-petal 10s linear infinite;
+        }
+
+        .petal::after {
+            content: "";
+            position: absolute;
+            top: -14%;
+            left: -10%;
+            width: 100%;
+            height: 100%;
+            border-radius: 150% 0 150% 0;
+            background-color: #a7f3d0; /* Emerald-200 */
+            transform: rotate(15deg);
+        }
+
+        @keyframes animate-petal {
+            0% { opacity: 0; top: -10%; transform: translateX(0) rotate(0deg); }
+            10% { opacity: 1; }
+            20% { transform: translateX(-20px) rotate(45deg); }
+            40% { transform: translateX(-20px) rotate(90deg); }
+            60% { transform: translateX(20px) rotate(135deg); }
+            80% { transform: translateX(-20px) rotate(180deg); }
+            100% { top: 110%; transform: translateX(-20px) rotate(225deg); }
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .input-group:focus-within i { color: #10b981; } /* Emerald-500 */
+        .input-group:focus-within input, 
+        .input-group:focus-within select, 
+        .input-group:focus-within textarea { border-color: #10b981; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 via-white to-emerald-100 min-h-screen w-full flex items-center justify-center relative py-10">
+
+    <!-- Back to Home Link -->
+    <a href="index.html" class="fixed top-6 left-6 z-20 text-gray-500 hover:text-emerald-600 transition-colors flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm">
+        <i class="fas fa-arrow-left"></i> Back to Login
+    </a>
+
+    <!-- Background Decoration -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-0 w-full flex justify-center opacity-20 pointer-events-none">
+             <svg viewBox="0 0 1440 320" class="w-full text-emerald-300 fill-current">
+                 <path d="M720 128L0 320h1440L720 128z" fill="#e2e8f0"></path>
+                 <path d="M720 128L580 200h280L720 128z" fill="#fff"></path>
+             </svg>
+        </div>
+    </div>
+
+    <!-- Falling Petals Container -->
+    <div id="sakura-container" class="sakura-container"></div>
+
+    <!-- Main Application Container -->
+    <div class="z-10 w-full max-w-2xl px-6 my-8">
+        <div class="glass-card rounded-2xl p-8 sm:p-10 transform transition-all hover:scale-[1.005] duration-500">
+            
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-50 mb-4 border-2 border-emerald-100 shadow-sm relative overflow-hidden group">
+                    <i class="fas fa-chalkboard-teacher text-3xl text-emerald-500 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 zen-font tracking-wide">Teacher Application</h1>
+                <p class="text-gray-500 text-sm mt-2 font-medium">Join our Expert Faculty</p>
+            </div>
+
+            <form id="applyForm" class="space-y-6">
+                
+                <!-- Personal Info Section -->
+                <div class="bg-emerald-50/50 p-4 rounded-xl space-y-4">
+                    <h3 class="text-emerald-800 font-semibold text-sm uppercase tracking-wider border-b border-emerald-100 pb-2 mb-2">
+                        <i class="fas fa-id-card mr-2"></i>Personal Details
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">First Name</label>
+                            <input type="text" id="firstName" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80" placeholder="e.g. Ama">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Last Name</label>
+                            <input type="text" id="lastName" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80" placeholder="e.g. Silva">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Address</label>
+                        <input type="text" id="address" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80" placeholder="No. 123, Temple Road, Colombo">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Date of Birth</label>
+                            <input type="date" id="dob" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80 text-gray-600">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Gender</label>
+                            <select id="gender" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80 text-gray-600">
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Email</label>
+                            <input type="email" id="email" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80" placeholder="teacher@example.com">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Phone Number</label>
+                            <input type="tel" id="phone" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80" placeholder="077-1234567">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Details -->
+                <div class="bg-emerald-50/50 p-4 rounded-xl space-y-4">
+                    <h3 class="text-emerald-800 font-semibold text-sm uppercase tracking-wider border-b border-emerald-100 pb-2 mb-2">
+                        <i class="fas fa-briefcase mr-2"></i>Professional Details
+                    </h3>
+                    
+                    <div class="space-y-1">
+                        <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Japanese Course Level</label>
+                        <select id="course" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80 text-gray-600">
+                            <option value="" disabled selected>Select JLPT Level to Teach</option>
+                            <option value="N5">N5 - Beginner</option>
+                            <option value="N4">N4 - Elementary</option>
+                            <option value="N3">N3 - Intermediate</option>
+                            <option value="N2">N2 - Pre-Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Qualifications & Experience</label>
+                        <textarea id="qualifications" rows="3" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white/80" placeholder="Briefly describe your certifications and teaching experience..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Account Security -->
+                <div class="bg-teal-50/50 p-4 rounded-xl space-y-4">
+                    <h3 class="text-teal-800 font-semibold text-sm uppercase tracking-wider border-b border-teal-100 pb-2 mb-2">
+                        <i class="fas fa-lock mr-2"></i>Account Security
+                    </h3>
+
+                    <div class="space-y-1">
+                        <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Create Username</label>
+                        <div class="relative">
+                            <input type="text" id="newUsername" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-200 bg-white/80" placeholder="Choose a unique username">
+                            <i class="fas fa-user absolute right-3 top-3 text-gray-400"></i>
+                        </div>
+                        <p id="userError" class="text-xs text-red-500 mt-1 hidden font-bold"><i class="fas fa-times-circle mr-1"></i>Username already taken.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Password</label>
+                            <input type="password" id="newPass" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-200 bg-white/80" placeholder="••••••••">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase ml-1">Confirm Password</label>
+                            <input type="password" id="confirmPass" required class="block w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-200 bg-white/80" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                    class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transform hover:-translate-y-0.5 transition-all duration-200 mt-6">
+                    Submit Application <i class="fas fa-paper-plane ml-2 mt-0.5"></i>
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 1. Petals Animation
+        function createPetal() {
+            const container = document.getElementById('sakura-container');
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            const startLeft = Math.random() * 100;
+            const animationDuration = Math.random() * 5 + 8;
+            const size = Math.random() * 10 + 10;
+            
+            petal.style.left = startLeft + '%';
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.animationDuration = animationDuration + 's';
+            petal.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            container.appendChild(petal);
+            
+            setTimeout(() => { petal.remove(); }, animationDuration * 1000);
+        }
+
+        for(let i = 0; i < 15; i++) { setTimeout(createPetal, Math.random() * 5000); }
+        setInterval(createPetal, 800);
+
+
+        // 2. Application Logic
+        document.getElementById('applyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get Values
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const dob = document.getElementById('dob').value;
+            const gender = document.getElementById('gender').value;
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const course = document.getElementById('course').value;
+            const qualifications = document.getElementById('qualifications').value.trim();
+            const username = document.getElementById('newUsername').value.trim();
+            const pass = document.getElementById('newPass').value;
+            const confirm = document.getElementById('confirmPass').value;
+            
+            const userError = document.getElementById('userError');
+
+            // Validation
+            if (pass !== confirm) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            // Check DB
+            let db = JSON.parse(localStorage.getItem('sakura_users') || '{}');
+
+            if (db[username]) {
+                userError.classList.remove('hidden');
+                document.getElementById('newUsername').classList.add('border-red-300', 'bg-red-50');
+                document.getElementById('newUsername').focus();
+                return;
+            } else {
+                userError.classList.add('hidden');
+                document.getElementById('newUsername').classList.remove('border-red-300', 'bg-red-50');
+            }
+
+            // Save Teacher Object
+            db[username] = {
+                pass: pass,
+                redirect: 'teacherdash.html',
+                role: 'Teacher',
+                name: `Tchr. ${firstName} ${lastName}`,
+                details: {
+                    firstName, lastName, address, dob, gender, 
+                    email, phone, course, qualifications
+                }
+            };
+            
+            localStorage.setItem('sakura_users', JSON.stringify(db));
+
+            // Success Animation
+            const btn = this.querySelector('button[type="submit"]');
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
+            
+            setTimeout(() => {
+                alert('Application Submitted Successfully!\nWelcome to the Faculty.');
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

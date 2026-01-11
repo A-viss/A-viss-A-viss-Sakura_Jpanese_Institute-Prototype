@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakura Tuition - Student Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .zen-font {
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        /* Sakura Animation */
+        .sakura-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .petal {
+            position: absolute;
+            background-color: #ffd7e6;
+            border-radius: 150% 0 150% 0;
+            animation: animate-petal 10s linear infinite;
+        }
+
+        .petal::after {
+            content: "";
+            position: absolute;
+            top: -14%;
+            left: -10%;
+            width: 100%;
+            height: 100%;
+            border-radius: 150% 0 150% 0;
+            background-color: #ffd7e6;
+            transform: rotate(15deg);
+        }
+
+        @keyframes animate-petal {
+            0% { opacity: 0; top: -10%; transform: translateX(0) rotate(0deg); }
+            10% { opacity: 1; }
+            100% { top: 110%; transform: translateX(-20px) rotate(225deg); }
+        }
+
+        /* Glassmorphism */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Nav Link Styles */
+        .nav-link {
+            position: relative;
+            color: #4b5563;
+            transition: color 0.3s;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #db2777;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: #db2777;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 via-white to-pink-100 min-h-screen text-gray-700">
+
+    <!-- Petal Background -->
+    <div id="sakura-container" class="sakura-container"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 w-full z-50 glass-nav px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center relative">
+            
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-500 border border-pink-200">
+                    <i class="fas fa-torii-gate"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800 zen-font leading-none">Sakura</h1>
+                    <span class="text-xs text-pink-500 font-medium tracking-widest">TUITION</span>
+                </div>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="studentdash.html" class="nav-link active">Home</a>
+                <a href="stdash.html" class="nav-link">Dashboard</a>
+                <a href="stcourse.html" class="nav-link">Courses</a>
+                <a href="stanalysiz.html" class="nav-link">Analytics</a>
+                <a href="stprofile.html" class="nav-link">Profile</a>
+            </div>
+
+            <!-- User Profile / Logout (Desktop & Mobile) -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:block text-right">
+                    <p id="userNameDisplay" class="text-sm font-bold text-gray-800">Student</p>
+                    <p class="text-xs text-gray-500">N5 Level</p>
+                </div>
+                
+                <!-- Changed: Removed 'group' class for hover effect, added ID and onclick -->
+                <div class="relative hidden sm:block" id="profile-container">
+                    <button onclick="toggleProfileMenu()" class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 p-0.5 shadow-md focus:outline-none transform active:scale-95 transition-transform">
+                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="User" class="w-full h-full rounded-full bg-white object-cover">
+                    </button>
+                    <!-- Dropdown: Removed group-hover:block, added ID -->
+                    <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 hidden border border-gray-100 z-50 origin-top-right transition-all duration-200">
+                        <a href="stprofile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600">
+                            <i class="fas fa-cog mr-2 text-gray-400"></i>Settings
+                        </a>
+                        <button onclick="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                            <i class="fas fa-sign-out-alt mr-2 text-red-400"></i>Sign Out
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-600 text-2xl focus:outline-none p-2">
+                    <i class="fas fa-bars transition-transform duration-300"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-lg flex flex-col transition-all duration-300 transform origin-top">
+            <a href="studentdash.html" class="px-6 py-4 text-gray-800 hover:bg-pink-50 hover:text-pink-600 font-medium border-b border-gray-100 transition-colors">
+                <i class="fas fa-home w-6"></i> Home
+            </a>
+            <a href="stdash.html" class="px-6 py-4 text-gray-800 hover:bg-pink-50 hover:text-pink-600 font-medium border-b border-gray-100 transition-colors">
+                <i class="fas fa-columns w-6"></i> Dashboard
+            </a>
+            <a href="stcourse.html" class="px-6 py-4 text-gray-800 hover:bg-pink-50 hover:text-pink-600 font-medium border-b border-gray-100 transition-colors">
+                <i class="fas fa-book-open w-6"></i> Courses
+            </a>
+            <a href="stanalysiz.html" class="px-6 py-4 text-gray-800 hover:bg-pink-50 hover:text-pink-600 font-medium border-b border-gray-100 transition-colors">
+                <i class="fas fa-chart-line w-6"></i> Analytics
+            </a>
+            <a href="stprofile.html" class="px-6 py-4 text-gray-800 hover:bg-pink-50 hover:text-pink-600 font-medium border-b border-gray-100 transition-colors">
+                <i class="fas fa-user w-6"></i> Profile
+            </a>
+            <button onclick="logout()" class="w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 font-medium transition-colors">
+                <i class="fas fa-sign-out-alt w-6"></i> Sign Out
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-24 pb-12 px-6 max-w-7xl mx-auto space-y-16">
+
+        <!-- Hero Section -->
+        <section class="relative rounded-3xl overflow-hidden shadow-2xl h-[400px] md:h-[500px] bg-gray-800">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2000&auto=format&fit=crop" 
+                 class="absolute inset-0 w-full h-full object-cover opacity-90" 
+                 alt="Japanese Landscape"
+                 onerror="this.style.opacity='0'">
+                 
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent flex items-center px-8 md:px-16">
+                <div class="max-w-2xl text-white space-y-4 animate-fade-in-up">
+                    <span class="inline-block px-3 py-1 bg-pink-500/90 rounded-full text-xs font-bold tracking-wide backdrop-blur-sm border border-pink-400">WELCOME TO SAKURA</span>
+                    <h2 class="text-4xl md:text-6xl font-bold zen-font leading-tight drop-shadow-lg">Master the Art of <br><span class="text-pink-300">Japanese</span></h2>
+                    <p class="text-lg text-gray-100 max-w-lg drop-shadow-md">
+                        Immerse yourself in language and culture. Your journey from beginner to fluency starts here with our expert guidance.
+                    </p>
+                    <div class="pt-4 flex gap-3">
+                        <button onclick="window.location.href='stcourse.html'" class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg transform hover:-translate-y-0.5">
+                            Continue Learning
+                        </button>
+                        <button onclick="window.location.href='stdash.html'" class="bg-white/20 hover:bg-white/30 text-white border border-white/50 px-6 py-3 rounded-lg font-bold transition-all backdrop-blur-sm shadow-lg transform hover:-translate-y-0.5">
+                            Go to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Institute (Grid) -->
+        <section>
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800 zen-font">Our Philosophy</h3>
+                <div class="w-16 h-1 bg-pink-400 mx-auto mt-2 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden p-6 group">
+                    <div class="h-48 rounded-xl overflow-hidden mb-6 relative bg-gray-200">
+                         <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop" 
+                              class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" alt="Classroom">
+                         <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-2">Immersive Learning</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        We don't just teach grammar; we bring Japan to you. Our curriculum integrates cultural nuances, history, and real-life conversation scenarios.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden p-6 group">
+                    <div class="h-48 rounded-xl overflow-hidden mb-6 relative bg-gray-200">
+                         <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=800&auto=format&fit=crop" 
+                              class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" alt="Writing Kanji">
+                         <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-2">Expert Sensei</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Learn from certified JLPT instructors who are passionate about your success. Personal feedback and guided writing sessions are our standard.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden p-6 group">
+                    <div class="h-48 rounded-xl overflow-hidden mb-6 relative bg-gray-200">
+                         <img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?q=80&w=800&auto=format&fit=crop" 
+                              class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" alt="Kyoto Streets">
+                         <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-2">Community First</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Join a vibrant community of learners. Participate in cultural events, movie nights, and speaking clubs to practice your skills.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="glass-card rounded-3xl p-8 md:p-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-pink-500 mb-1 zen-font">500+</div>
+                    <div class="text-sm text-gray-500 uppercase tracking-wider font-bold">Students</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-pink-500 mb-1 zen-font">50+</div>
+                    <div class="text-sm text-gray-500 uppercase tracking-wider font-bold">Teachers</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-pink-500 mb-1 zen-font">100%</div>
+                    <div class="text-sm text-gray-500 uppercase tracking-wider font-bold">Pass Rate</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-pink-500 mb-1 zen-font">24/7</div>
+                    <div class="text-sm text-gray-500 uppercase tracking-wider font-bold">Support</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white/60 border-t border-gray-200 mt-12 py-8 text-center backdrop-blur-sm">
+        <p class="text-gray-500 text-sm">© 2026 Sakura Tuition. Designed with <i class="fas fa-heart text-pink-400"></i></p>
+    </footer>
+
+    <script>
+        // 1. Sakura Animation
+        function createPetal() {
+            const container = document.getElementById('sakura-container');
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            petal.style.left = Math.random() * 100 + '%';
+            const size = Math.random() * 10 + 10;
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.animationDuration = (Math.random() * 5 + 8) + 's';
+            petal.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            container.appendChild(petal);
+            setTimeout(() => { petal.remove(); }, 13000);
+        }
+        for(let i=0; i<15; i++) setTimeout(createPetal, Math.random()*5000);
+        setInterval(createPetal, 1000);
+
+        // 2. User Authentication Check & Display
+        window.onload = function() {
+            // Retrieve user info from local storage (Simulating session)
+            const db = JSON.parse(localStorage.getItem('sakura_users') || '{}');
+            const currentUser = localStorage.getItem('sakura_current_user'); 
+            
+            if (!currentUser) {
+                 document.getElementById('userNameDisplay').textContent = "Vismal Kethmika";
+            } else {
+                 const name = db[currentUser] ? db[currentUser].name : currentUser;
+                 document.getElementById('userNameDisplay').textContent = name;
+            }
+        };
+
+        function logout() {
+            if(confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem('sakura_current_user');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 3. Mobile Menu Logic
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if(mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                
+                // Toggle Icon
+                const icon = mobileBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+        }
+
+        // 4. Toggle Profile Menu (Desktop)
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profile-dropdown');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close profile dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.getElementById('profile-container');
+            const menu = document.getElementById('profile-dropdown');
+            
+            // If the click is outside the container (which holds button + dropdown), hide it
+            if (container && !container.contains(event.target)) {
+                if (!menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
